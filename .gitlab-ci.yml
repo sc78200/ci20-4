@@ -1,0 +1,28 @@
+stages:
+  - test
+
+image: php:7.2
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+  - vendor/
+
+before_script:
+- apt update && apt install -y git
+- curl --show-error --silent https://getcomposer.org/installer | php
+- php bin/composer.phar install --no-scripts --no-progress
+
+test:unit:
+  stage: test
+  script:
+  - bin/phpunit tests/Unit
+
+test:integration:
+  stage: test
+  script:
+  - bin/phpunit tests/Integration
+
+test:functionnal:
+  stage: test
+  script: php vendor/bin/behat
